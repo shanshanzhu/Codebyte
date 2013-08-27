@@ -448,5 +448,392 @@ function ArithGeo(arr) {
     return -1;
          
 }                   
+
+////
+function ArrayAdditionI(arr) { 
+  // code goes here  
+  var m = arr[0];
+  for (var i=0; i<arr.length-1;i++)
+     m =  Number(arr[i]) > Number(arr[i+1]) ? arr[i]:arr[i+1];
+
+  arr.slice(arr.indexOf(m),arr.indexOf(m));//splice the m from arr.
+  //var k =0;
+  var combiAdd = function (a){
+    var sum = 0;
+   
+    for (var j=0; j<a.length;j++){
+       sum += a[j];
+      if (sum == m)
+        throw true;
+      else if (sum != m && j==a.length-1){
+        if (a.length == 1)
+          throw false;//"return false; else return combiAdd" doesn't work.????????
+        else
+           combiAdd(a.slice(1,a.length));//keep the sec(1,a.length) into a new array.
+      }
+      }
+        
+    }
+    
+      try {
+        combiAdd(arr);
+      }
+  catch(exp){
+    if (exp !=true && exp!=false)
+      throw exp;
+  else 
+    return exp;}
+                 
+}
+///
+//arr.splice(start,end) cause arr to be spliced,the remnaint of arr is void of (start,end);while newarr=arr.splice(start,end) is the spliced part of arr-> arr(start,end) .
+///
+function LetterCountI(str) { 
+
+  function chToObj(word){
+    var obj = {};
+    for (var i = 0; i < word.length; i++) 
+      obj[word[i]] = obj[word[i]] ? obj[word[i]] + 1 : 1;//if undefined, =1, if there is a number, ++;
+    return obj; 
+  }
+  function maxWord(obj){
+    var max = 1;
+    for (var letter in obj)
+      max = (obj[letter] > max) ? obj[letter] : max; //use obj[letter],but not obj.letter;
+    return max;
+  }      
+  function max(k){
+    return maxWord(chToObj(set[k]));
+  }
+  
+  
+  var ix = 0;
+  var set= str.split(" ");
+  for (var j = 0; j < set.length; j++) 
+    ix = max (j) > max (ix) ? j: ix;
+  if (max(ix) == 1)
+    return -1;
+  else 
+    return set[ix];
+}
+   
+///// 1st version of SecondGreatLow that works.
+function SecondGreatLow(arr) { 
+  // L-large,sl-secondLarge,s-small,ss-secondsmall
+  if (arr.length == 2){
+    if (arr[0] > arr[1]) 
+      return arr[0] +" " + arr[1];
+    else
+      return arr[1] +" " + arr[0];
+}
+  else{
+    function findsL(){
+    if (arr[0] > arr[1]) {
+       var L = arr[0];
+       var sL = arr[1];
+    }
+    else 
+       var L = arr[1];
+       var sL = arr[0];
+
+  for (var i = 2; i < arr.length; i++) {
+    if (arr[i] >= L) {
+      sL = L;
+      L = arr[i];
+    }
+    if (arr[i] < L && arr[i] >=sL) 
+      sL = arr[i];
+  }
+      return sL;
+    }
+
+    function findss(s,ss){
+    if (arr[0] > arr[1]) {
+       ss = arr[0];
+       s = arr[1];
+    }
+    else 
+       ss = arr[1];
+       s = arr[0];
+
+  for (var i = 2; i < arr.length; i++) {
+    if (arr[i] <= s) {
+      ss = s;
+      s = arr[i];
+    }
+    if (arr[i] < ss && arr[i] >s) 
+      ss = arr[i];
+  }
+      return ss;
+    }
+   return findsL() + " " + findss();      
+}
+}
+
+/// 2nd version 
+var operators = {
+    "<=":function(a,b){return a <= b},
+    ">=":function(a,b){return a >= b},
+    "<":function(a,b){return a < b},
+    ">":function(a,b){return a > b}
+};
+
+function SecondGreatLow(arr) { 
+  // L-large,sl-secondLarge,s-small,ss-secondsmall
+  function firstTwo(i){
+    var L=0;
+      var sL=0;
+     if (arr[i] > arr[i+1]) {
+        L = arr[i];
+        sL = arr[i+1];
+  //       return [L,sL];
+    }
+      else if (arr[i] < arr[i+1]) {
+        L = arr[i+1];
+        sL = arr[i];
+  //          return [L,sL];
+      }
+      else if (arr[i] == arr[i+1]){
+         i++;
+         return firstTwo(i); //notice the return must be added here;
+       }
+  return [L,sL]; //either one return here, or two returns in 1st if and else if;
+   }
+   L = firstTwo(0)[0];
+   sL = firstTwo(0)[1];
+     function findsL(L,sL,op1,op2,op3){
+      for (var i = 2; i < arr.length; i++) {
+        if (operators[op1](arr[i], L)) {
+          sL = L;
+          L = arr[i];
+         }
+        else if (operators[op2](arr[i], L) && operators[op3](arr[i], sL)) //use operators[],rather than operators();
+          sL = arr[i];
+                  
+      } 
+        return sL;
+      }
+
+   return  findsL(sL,L,"<",">=","<=") + " " + findsL(L,sL,">","<",">") ;      
+}
+//////
+//notice the update of len div rem in the stepadd, to execute closure. ???but how to update variables related??
+function DivisionStringified(num1,num2) { 
+  var res = Math.ceil(num1/num2).toString();
+  var newres=[];
+  var len,div,rem;
+  var  len = res.length;
+  var  div = Math.floor(len/3);
+  var  rem = len%3;
+  function stepadd(a) {
+    newres.push(res.slice(0,a));
+    newres.push(",");
+    res = res.slice(a);
+    len = res.length;
+    div = Math.floor(len/3);
+    rem = len%3;
+    } 
+  while (div > 1){
+    if (rem !=0)
+      stepadd(rem);       
+    else 
+      stepadd(3);
+    }
+  if (div == 1 && rem !=0)
+   stepadd(rem);
+  newres.push(res);
+  return newres.join("");
+}
+
+/////
+function CountingMinutesI(str) { 
+  var list = str.split("-");
+  var obj = [];
+  var minarr=[];
+  function record (h,m){
+    return {hour:h, min: m};
+  }
+ 
+  function findHour(timeStr){
+    var h = Number(timeStr.slice(0,timeStr.indexOf(":")));
+    if (h == 12)
+      h = h - 12;
+    if (timeStr.indexOf("pm")!= -1)
+      h = h + 12;
+    return h;
+   }
+  
+   function findMin(timeStr){
+     return Number(timeStr.slice(timeStr.indexOf(":")+1,timeStr.indexOf(":")+3));
+   }
+  for (i = 0; i < list.length; i++){
+    obj[i]=record(findHour(list[i]),findMin(list[i]));
+    minarr.push(obj[i].hour*60 + obj[i].min);
+           }
+  timelap = minarr[1]-minarr[0];
+  return timelap >=0? timelap:(60*24+timelap);
+
+         
+}
+////
+function MeanMode(arr) { 
+  function findMean(){
+    var total = 0;
+    var i = 0;
+    forEach (arr,function (num){
+      total +=num; i++;});//num=arr[i] here;
+    return total/i;
+  }
+  
+  function findMode(){
+    var newarr=[];
+    var maxFreq=0;
+    var ModeIx=0; var i = 0;
+    forEach(arr, function(num){
+      newarr[num]= newarr[num]? newarr[num]+1:1;});
+    forEach(arr, function(num){
+      if (maxFreq < newarr[i]){
+       maxFreq = newarr[i];
+       ModeIx = i;
+      }
+      i++;
+    });
+    return ModeIx;
+  }
+ //   return ModeIx;
+  
+      
+  function forEach(list,func){
+    for (i = 0; i < list.length; i++) {
+      func(list[i]);
+    }
+  }
+
+  return findMean() == findMode()? 1:0;
+         
+}
+       
+function DashInsert(num) { 
+
+  var arr = num.toString().split("");
+  var newarr=[];
+  for ( var i = 0; i < arr.length; i++) {
+    newarr.push(arr[i]);
+    if (arr[i]%2 != 0 && arr[i+1]%2 !=0 && arr[i+1]!=undefined )
+      newarr.push("-");
+  }
+  return newarr.join("");
+}      
+
+function SwapCase(str) { 
+  var lowerCase = "abcdefghijklmnopqrstuvwxyz";
+  var upperCase = lowerCase.toUpperCase();
+  var arr=str.split("");
+  for (var i = 0; i < arr.length; i++) {
+    if(lowerCase.indexOf(arr[i])!= -1)
+      arr[i]=arr[i].toUpperCase();
+    else if (upperCase.indexOf(arr[i])!= -1)
+      arr[i]=arr[i].toLowerCase();
+  }
+
+  return arr.join("");
+  
+         
+}
+
+function NumberAddition(str) { 
+   function isNum(str1){
+    if (str1 == " ")
+      return false;
+    else
+      return !isNaN(Number(str1));
+  }
+  
+  var sum = 0;
+  var i = 0;
+  while (i < str.length) {
+    if (!isNum(str[i])){
+        sum = sum + Number(str.slice(0,i));
+        str=str.slice(i+1);
+        i = 0;
+    }
+    else
+      i++;
+  }
+
+  return sum + Number(str);
+}
+
+/////
+function ThirdGreatest(strArr) { 
+///place the wordcount into a new arry, preserving sequence in the array.
+  var arr = [];
+  for (var i = 0; i < strArr.length; i++)
+    arr.push(strArr[i].length);
+  return strArr[ixOfThirdGreatNum(arr)];     
+}
+
+function ixOfThirdGreatNum(arr){ ///to create a [{..},{..},...] structure, in which index of {..} is the arr[i] value,
+//{...}={counter of all items whose value is arr[i](counter):number,index of all items whose value is arr[i](ix):i,...etc};
+  var newarr = [];
+  var greatnum =0;
+  for (var i=0; i < arr.length; i++) {
+    if (newarr[arr[i]] == undefined){ ///tricky step to initialize {} first,if omitted, there is mistakes.
+      newarr[arr[i]] = {};
+      function addset(){
+      newarr[arr[i]]["counter"] = (newarr[arr[i]]["counter"] ? newarr[arr[i]]["counter"]+1:1);
+      function a (){if (newarr[arr[i]]["ix"] ==undefined)  ///tricky step to initialize [] first,if omitted, there is mistakes."? :"function cannot work.
+          newarr[arr[i]]["ix"]=  [i];
+                    else newarr[arr[i]]["ix"].push(i);}
+        a();
+      }
+    addset();}
+    else
+       addset();      
+  }
+  
+  function findIx(n,j){///recursive function to find the index from the " ix:[]"
+    if (newarr[j]!=undefined)  {
+      var counter = newarr[j]["counter"];
+      if (counter>=n){
+      return newarr[j]["ix"][n-1];
+    }
+      else {
+        return findIx(n-counter,j-1);}
+    }
+    else
+      return findIx(n,j-1);
+  }
+  
+  
+  return (findIx(3, newarr.length-1));
+
+}
+///////////////////medium difficulty......fail to write......
+function PrimeChecker(num) { 
+  num = num.toString();
+  var arr=scramble(num);
+  var res = 0;
+  for(var i = 0; i < arr.length; i++) {
+    if (isPrime(arr[i])){
+      res = 1;
+      break;
+  }
+  }
+    return res;
+}
+   
+function scramble(str) {
+  var arr = [];
+  var n=str.length;
+  function concateRecur(n,i){
+    if (n > 0){
+      for (var i = 0; i < n; i ++){
+        for (var j= 0; j < n; j++){
+          if (j!=i)
+        oneStr = str[i].concat(concateRecu(n,j));
+        oneStr.concat(scramble(str[i]))
+    
+      for (var j = i
 </html>
 
